@@ -1,3 +1,4 @@
+from urllib import response
 from jsonschema import validate
 import pytest
 import schemas
@@ -13,4 +14,21 @@ TODO: Finish this test by...
 4) Validate the response message "Order and pet status updated successfully"
 '''
 def test_patch_order_by_id():
-    pass
+    create_response = api_helpers.post_api_data("/store/order", {
+        "pet_id": 0})
+    assert create_response.status_code == 201
+    order_id=create_response.json().get("id")
+
+
+    patch_data = {
+        "status": "sold"
+    }
+
+    response = api_helpers.patch_api_data(f"/store/order/{order_id}", patch_data)
+
+    # Validate response code
+    assert response.status_code == 200
+
+    # Validate response message
+    response_data = response.json()
+    assert_that(response.json().get("message"), is_("Order and pet status updated successfully"))
